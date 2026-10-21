@@ -32,3 +32,10 @@ Full RFC 5545 RRULE is complex enough that correct implementations are rare and 
 - **Month length**: `BYMONTHDAY=31` silently skips February (and other short months). This matches common expectations for "last day" style rules, though a dedicated `BYMONTHDAY=-1` would be more explicit (and is not supported here).
 - **Weekly anchor**: if `dtstart` is not in the `BYDAY` set, the first occurrence is the earliest matching weekday on or after `dtstart` within its week.
 - **UNTIL**: must be a `YYYYMMDD` date string. `DATE-TIME` UNTIL values are rejected because this library only produces dates, and mixing precision levels is a common source of off-by-one bugs.
+
+## Design notes
+
+The window stores values eagerly rather than keeping running aggregates. Running
+sums drift with floating point over long streams, and recomputing from a small
+buffer is cheap enough that the drift is not worth the speed.
+
